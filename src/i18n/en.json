@@ -1,0 +1,14 @@
+{
+  "login": {
+    "title": "Sign in to start your session",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign In",
+    "forgot": "I forgot my password",
+    "remember": "Save account"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {name}!",
+    "token": "Your access token is:"
+  }
+}
