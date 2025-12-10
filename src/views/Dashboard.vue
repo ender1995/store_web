@@ -1,100 +1,106 @@
 <template>
-    <div class="wrapper">
+    <div class="dashboard-layout">
+        <!-- Sidebar trái -->
+        <Sidebar/>
 
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Dashboard</a>
-                </li>
-            </ul>
+        <!-- Nội dung phải -->
+        <div class="dashboard-main">
+            <!-- Header trên -->
+            <header class="dashboard-header">
+                <h1 class="dashboard-title">Bảng điều khiển</h1>
 
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a href="#" class="nav-link" @click="logout">Logout</a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="#" class="brand-link">
-                <span class="brand-text font-weight-light">AdminLTE Vue</span>
-            </a>
-
-            <div class="sidebar">
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
-                        <li class="nav-item">
-                            <router-link to="/" class="nav-link active">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/users" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>Users</p>
-                            </router-link>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- Content Wrapper -->
-        <div class="content-wrapper">
-            <section class="content-header">
-                <div class="container-fluid">
-                    <h1>Dashboard</h1>
+                <div class="dashboard-user">
+                    <span class="dashboard-user__name">Xin chào, Admin</span>
+                    <!-- chỗ này bạn có thể thêm avatar / dropdown logout -->
+                    <button class="btn-logout" @click="logout">
+                        Đăng xuất
+                    </button>
                 </div>
-            </section>
+            </header>
 
-            <section class="content">
-                <div class="container-fluid">
-                    <!-- Example card -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Summary</h3>
-                        </div>
-                        <div class="card-body">
-                            <p>Welcome, admin! Your access token is:</p>
-                            <pre>{{ token }}</pre>
-                        </div>
-                    </div>
+            <!-- Nội dung chính -->
+            <section class="dashboard-content">
+                <!-- Nếu Dashboard.vue là layout, bạn có thể dùng router-view bên trong -->
+                <router-view/>
+
+                <!-- Hoặc nếu đây là màn dashboard thực sự, để các card thống kê ở đây -->
+                <!--
+                <div class="cards">
+                  ...
                 </div>
+                -->
             </section>
         </div>
-
-        <!-- Footer -->
-        <footer class="main-footer">
-            <div class="float-right d-none d-sm-inline">Version 1.0</div>
-            <strong>&copy; 2025 Your Company.</strong>
-        </footer>
-
     </div>
 </template>
 
-<style scoped>
+<script setup>
+import Sidebar from '@/components/layout/Sidebar.vue'
+import {useRouter} from 'vue-router'
 
-</style>
+const router = useRouter()
 
-<script>
-export default {
-    name: "Dashboard",
-    data() {
-        return {
-            token: localStorage.getItem('access_token') || ''
-        }
-    },
-    methods: {
-        logout() {
-            localStorage.removeItem('access_token')
-            this.$router.push('/login')
-        }
-    }
+const logout = () => {
+    // Xoá token + quyền
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('roles')
+    localStorage.removeItem('scope')
+
+    // tuỳ bạn muốn giữ hay xoá thông tin remember
+    // localStorage.removeItem('remember_user')
+    // localStorage.removeItem('remember_pwd')
+
+    // Điều hướng về login
+    router.push({name: 'Login'})
 }
 </script>
+
+<style scoped>
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f3f4f6;
+}
+
+.dashboard-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.dashboard-header {
+    height: 64px;
+    padding: 0 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.dashboard-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.dashboard-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dashboard-user__name {
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.dashboard-content {
+    padding: 20px 24px;
+    box-sizing: border-box;
+    flex: 1;
+    overflow: auto;
+}
+</style>

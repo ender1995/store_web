@@ -128,7 +128,10 @@ export default {
 
                 if (json.code === 200 && json.data?.token) {
                     localStorage.setItem("access_token", json.data.token);
-                    localStorage.setItem("scope", json.data.scope);
+
+                    let rawScope = json.data.scope
+                    let roleArr = String(rawScope).split(/[,\s]+/).filter(Boolean);
+                    localStorage.setItem("scope", JSON.stringify(roleArr));
 
                     // Optional: remember me logic
                     if (this.remember) {
