@@ -5,7 +5,7 @@ import ForgotPassword from '../views/ForgotPassword.vue'
 import ResetPassword from '../views/ResetPassword.vue'
 
 const routes = [
-    {path: '/login', component: Login},
+    {path: '/login', name: 'Login', component: Login},
     {path: '/', component: Dashboard, meta: {requiresAuth: true}},
     {path: '/forgot-password', name: 'ForgotPassword', component: ForgotPassword},
     {path: '/reset-password', name: 'ResetPassword', component: ResetPassword}

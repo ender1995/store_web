@@ -34,6 +34,7 @@
 <script>
 import Swal from "sweetalert2";
 import {RESET_PASSWORD_URL} from "../config/api";
+import router from "@/router/index.js";
 
 export default {
     data() {
@@ -50,7 +51,7 @@ export default {
     methods: {
         async resetPassword() {
             if (this.newPassword !== this.confirmPassword) {
-                Swal.fire("Error", "Passwords do not match", "error");
+                await Swal.fire("Error", "Passwords do not match", "error");
                 return;
             }
 
@@ -59,9 +60,9 @@ export default {
                     `${RESET_PASSWORD_URL}?token=${this.token}&newPassword=${encodeURIComponent(this.newPassword)}`,
                     {method: "POST"}
                 );
-                const text = await res.text();
+                const json = await res.json();
 
-                if (text.includes("successfully")) {
+                if (json.code === 200 && json.data?.token) {
                     let timerInterval;
                     Swal.fire({
                         title: 'Password reset successfully!',
@@ -71,23 +72,57 @@ export default {
                         didOpen: () => {
                             const b = Swal.getHtmlContainer().querySelector('b')
                             timerInterval = setInterval(() => {
-                                const remaining = Math.ceil(Swal.getTimerLeft() / 1000)
-                                b.textContent = remaining
+                                b.textContent = Math.ceil(Swal.getTimerLeft() / 1000)
                             }, 1000)
                         },
                         willClose: () => {
                             clearInterval(timerInterval)
                         }
                     }).then(() => {
-                        this.$router.push({name: "Login"});
+                        router.push({name: 'Login'});
                     });
                 } else {
-                    Swal.fire("Error", text, "error");
+                    let timerInterval;
+                    Swal.fire({
+                        title: 'Password reset false!',
+                        html: 'Redirecting to login in <b></b> seconds.',
+                        icon: "error",
+                        timer: 5000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            const b = Swal.getHtmlContainer().querySelector('b')
+                            timerInterval = setInterval(() => {
+                                b.textContent = Math.ceil(Swal.getTimerLeft() / 1000)
+                            }, 1000)
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval)
+                        }
+                    }).then(() => {
+                        router.push({name: 'Login'});
+                    });
                 }
 
             } catch (err) {
-                console.error(err);
-                Swal.fire("Error", "Server error, please try again later", "error");
+                let timerInterval;
+                Swal.fire({
+                    title: 'Password reset false!',
+                    html: 'Redirecting to login in <b></b> seconds.',
+                    icon: "error",
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            b.textContent = Math.ceil(Swal.getTimerLeft() / 1000)
+                        }, 1000)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then(() => {
+                    router.push({name: 'Login'});
+                });
             }
         }
     }
